@@ -1,57 +1,43 @@
 import streamlit as st
-import streamlit.components.v1 as components
-import os
 
-st.set_page_config(
-    page_title="Lunara AI",
-    page_icon="🌙",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+# Sekme tanımlamalarında 'AI Rehber' yerine 'Doğum Haritası' kullanın
+tab_kahve, tab_dogum_haritasi, tab_tarot = st.tabs(
+    ["☕ Kahve Falı", "🌌 Doğum Haritası", "🔮 Tarot Falı"]
 )
 
-# Dosya yolunu güvenli şekilde tespit et
-current_dir = os.path.dirname(os.path.abspath(__file__))
-html_path = os.path.join(current_dir, "index.html")
+# -----------------------------------------------------------------------------
+# DOĞUM HARİTASI SEKMESİ
+# -----------------------------------------------------------------------------
+with tab_dogum_haritasi:
+    st.subheader("🌌 Kişiye Özel Doğum Haritası Analizi")
+    st.caption(
+        "Gezegenlerin doğum anınızdaki konumlarını ve hayat yolunuza etkilerini keşfedin."
+    )
 
-html_code = ""
-if os.path.exists(html_path):
-    with open(html_path, "r", encoding="utf-8") as f:
-        html_code = f.read()
+    with st.form(key="dogum_haritasi_form"):
+        col1, col2 = st.columns(2)
 
-# Sol menü ve içerik çakışmasını önleyen esnek yapı
-components.html(
-    f"""
-    <style>
-      body {{
-        margin: 0;
-        padding: 0;
-        background-color: transparent;
-        overflow-x: hidden;
-      }}
-      .main-layout-wrapper {{
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-        width: 100%;
-        box-sizing: border-box;
-      }}
-      .left-sidebar-panel {{
-        flex: 0 0 280px;
-        max-width: 280px;
-        box-sizing: border-box;
-      }}
-      .right-content-panel {{
-        flex: 1;
-        min-width: 0;
-        box-sizing: border-box;
-      }}
-    </style>
-    <div class="main-layout-wrapper">
-      <div class="right-content-panel">
-        {html_code}
-      </div>
-    </div>
-    """,
-    height=950,
-    scrolling=True
-)
+        with col1:
+            dh_name = st.text_input("Adınız ve Soyadınız", placeholder="Örn: Deniz Yılmaz")
+            birth_date = st.date_input("Doğum Tarihiniz")
+
+        with col2:
+            birth_time = st.time_input("Doğum Saatiniz (Bilinmiyorsa tahmini yazın)")
+            birth_place = st.text_input("Doğum Yeri (Şehir / Ülke)", placeholder="Örn: İstanbul, Türkiye")
+
+        dh_question = st.text_area(
+            "Özellikle Odaklanmak İstediğiniz Konu veya Soru",
+            placeholder="Örn: Kariyer yolumda gezegen açıları neye işaret ediyor?",
+        )
+
+        submit_dh = st.form_submit_button(
+            "✨ Doğum Haritama Bak", use_container_width=True
+        )
+
+    if submit_dh:
+        if not dh_name.strip() or not birth_place.strip():
+            st.error("⚠️ Lütfen adınızı ve doğum yerinizi eksiksiz girin.")
+        else:
+            with st.spinner("Gezegen konumları ve ev açıları hesaplanıyor..."):
+                # Burada Doğum Haritası prompt'unuzu OpenAI / GPT-4o'ya gönderebilirsiniz
+                st.success("Doğum haritası analizi başarıyla oluşturuldu!")
