@@ -5,78 +5,569 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lunara AI - Mistik Rehber</title>
     <style>
-        /* Ana Sayfa Düzeni ve Çakışmayı Önleyen Flexbox Yapısı */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0d0b18;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
         .main-container {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: flex-start !important;
-            gap: 30px !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
+            display: flex;
+            flex-direction: row;
+            gap: 25px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Sol Kredi Paketleri Menüsü */
+        /* Sol Kredi Paketleri Paneli */
         .credit-sidebar {
-            flex: 0 0 280px !important;
-            width: 280px !important;
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            z-index: 10 !important;
+            flex: 0 0 280px;
+            width: 280px;
+            background: rgba(23, 20, 41, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            height: fit-content;
         }
 
-        /* Sağ İçerik ve Burç Yorumları Alanı */
+        .sidebar-title {
+            color: #ffd700;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .credit-card {
+            background: rgba(35, 30, 60, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .credit-card.popular {
+            border-color: #9d4edd;
+            background: rgba(45, 30, 80, 0.7);
+        }
+
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: #9d4edd;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .credit-amount {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4a154b, #6b1170);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Sağ İçerik Alanı */
         .content-area {
-            flex: 1 !important;
-            min-width: 0 !important;
-            width: 100% !important;
+            flex: 1;
+            min-width: 0;
         }
 
-        /* Burç Yorum Metin Biçimlendirmesi */
-        .horoscope-result p {
-            margin-bottom: 18px;
-            line-height: 1.7;
-            font-size: 1.05rem;
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #a0aec0;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            color: #ffd700;
+            background: rgba(157, 78, 221, 0.2);
+        }
+
+        .section-block {
+            display: none;
+        }
+
+        .section-block.active {
+            display: block;
+        }
+
+        .header-title {
+            text-align: center;
+            color: #ffd700;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .header-subtitle {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+
+        /* Burç Grid Yapısı */
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .zodiac-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .zodiac-card {
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .zodiac-card:hover, .zodiac-card.active {
+            border-color: #9d4edd;
+            background: rgba(45, 30, 80, 0.8);
+            transform: translateY(-3px);
+        }
+
+        .zodiac-icon {
+            font-size: 1.8rem;
+            color: #c77dff;
+            margin-bottom: 5px;
+        }
+
+        .zodiac-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        /* Tarot Kartları Grid */
+        .tarot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .tarot-card {
+            background: linear-gradient(145deg, #1e1838, #110d24);
+            border: 2px dashed #9d4edd;
+            border-radius: 12px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .tarot-card:hover {
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.5);
+        }
+
+        /* Yorum ve Analiz Kutusu */
+        .analysis-box {
+            background: rgba(20, 16, 38, 0.9);
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-header .icon {
+            font-size: 2.5rem;
+            color: #ffd700;
+        }
+
+        .analysis-header .title {
+            color: #ffd700;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .analysis-header .date {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        .analysis-content p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            color: #d1d5db;
+            font-size: 1rem;
             text-align: justify;
+        }
+
+        .analysis-content p strong {
+            color: #ffd700;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            opacity: 0.95;
+            box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+        }
+
+        /* AI Sohbet Arayüzü */
+        .chat-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(157, 78, 221, 0.4);
+            background: rgba(15, 12, 28, 0.9);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #ffd700;
         }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <!-- İçerik Alanı -->
-        <div class="content-area">
-            <div id="horoscope-display" class="horoscope-result">
-                <!-- Burç yorumları JS tarafından en az 4 uzun paragraf olarak yüklenecektir -->
+        <!-- Sol Kredi Paketleri -->
+        <div class="credit-sidebar">
+            <div class="sidebar-title">
+                <span>✨</span> KREDİ PAKETLERİ
             </div>
+
+            <div class="credit-card">
+                <div class="card-header">
+                    <span class="card-title">1. Başlangıç</span>
+                    <span class="credit-amount">100 Kredi</span>
+                </div>
+                <div class="price">₺150</div>
+                <div class="description">Günlük hızlı fal ve genel burç analizleri için ideal.</div>
+                <button class="buy-btn">Satın Al</button>
+            </div>
+
+            <div class="credit-card popular">
+                <span class="badge">Popüler</span>
+                <div class="card-header">
+                    <span class="card-title">2. Mistik Pro</span>
+                    <span class="credit-amount">550 Kredi</span>
+                </div>
+                <div class="price">₺600</div>
+                <div class="description">Detaylı doğum haritası & Tarot açılımları için.</div>
+                <button class="buy-btn" style="background: linear-gradient(135deg, #e58e26, #f5cd79); color: #000;">Satın Al</button>
+            </div>
+
+            <div class="credit-card">
+                <div class="card-header">
+                    <span class="card-title">3. Mistik VIP</span>
+                    <span class="credit-amount">2.000 Kredi</span>
+                </div>
+                <div class="price">₺1.800</div>
+                <div class="description">Sınırsız AI Rehberlik ve tam astrolojik analizler.</div>
+                <button class="buy-btn">Satın Al</button>
+            </div>
+        </div>
+
+        <!-- Sağ İçerik Alanı -->
+        <div class="content-area">
+            <!-- Navigasyon Sekmeleri -->
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('zodiac-section', event)">♈ Burç Yorumları</button>
+                <button class="tab-btn" onclick="switchTab('tarot-section', event)">🃏 Tarot Açılımı</button>
+                <button class="tab-btn" onclick="switchTab('coffee-section', event)">☕ Kahve Falı</button>
+                <button class="tab-btn" onclick="switchTab('guide-section', event)">🔮 AI Mistik Rehber</button>
+            </div>
+
+            <!-- 1. BURÇ YORUMLARI SEKSİYONU -->
+            <div id="zodiac-section" class="section-block active">
+                <h1 class="header-title">GÜNLÜK BURÇ YORUMLARI</h1>
+                <p class="header-subtitle">Gezegenlerin güncel konumlarına göre burcunuzun aldığı kozmik etkileri ve detaylı tavsiyeleri inceleyin.</p>
+
+                <div class="zodiac-grid">
+                    <div class="zodiac-card" onclick="selectZodiac('KOÇ', '♈', '21 Mart - 19 Nisan', event)"><div class="zodiac-icon">♈</div><div class="zodiac-name">KOÇ BURCU</div></div>
+                    <div class="zodiac-card active" onclick="selectZodiac('BOĞA', '♉', '20 Nisan - 20 Mayıs', event)"><div class="zodiac-icon">♉</div><div class="zodiac-name">BOĞA BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('İKİZLER', '♊', '21 Mayıs - 20 Haziran', event)"><div class="zodiac-icon">♊</div><div class="zodiac-name">İKİZLER BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('YENGEÇ', '♋', '21 Haziran - 22 Temmuz', event)"><div class="zodiac-icon">♋</div><div class="zodiac-name">YENGEÇ BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('ASLAN', '♌', '23 Temmuz - 22 Ağustos', event)"><div class="zodiac-icon">♌</div><div class="zodiac-name">ASLAN BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('BAŞAK', '♍', '23 Ağustos - 22 Eylül', event)"><div class="zodiac-icon">♍</div><div class="zodiac-name">BAŞAK BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('TERAZİ', '♎', '23 Eylül - 22 Ekim', event)"><div class="zodiac-icon">♎</div><div class="zodiac-name">TERAZİ BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('AKREP', '♏', '23 Ekim - 21 Kasım', event)"><div class="zodiac-icon">♏</div><div class="zodiac-name">AKREP BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('YAY', '♐', '22 Kasım - 21 Aralık', event)"><div class="zodiac-icon">♐</div><div class="zodiac-name">YAY BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('OĞLAK', '♑', '22 Aralık - 19 Ocak', event)"><div class="zodiac-icon">♑</div><div class="zodiac-name">OĞLAK BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('KOVA', '♒', '20 Ocak - 18 Şubat', event)"><div class="zodiac-icon">♒</div><div class="zodiac-name">KOVA BURCU</div></div>
+                    <div class="zodiac-card" onclick="selectZodiac('BALIK', '♓', '19 Şubat - 20 Mart', event)"><div class="zodiac-icon">♓</div><div class="zodiac-name">BALIK BURCU</div></div>
+                </div>
+
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <div class="icon" id="z-icon">♉</div>
+                        <div>
+                            <div class="title" id="z-title">BOĞA BURCU</div>
+                            <div class="date" id="z-date">20 Nisan - 20 Mayıs</div>
+                        </div>
+                    </div>
+                    <div class="analysis-content" id="z-content"></div>
+                </div>
+            </div>
+
+            <!-- 2. TAROT AÇILIMI SEKSİYONU -->
+            <div id="tarot-section" class="section-block">
+                <h1 class="header-title">MİSTİK TAROT AÇILIMI</h1>
+                <p class="header-subtitle">3 Kart Seçin: Geçmiş, Şimdi ve Gelecek Yolculuğunuzu Keşfedin.</p>
+
+                <div class="tarot-grid">
+                    <div class="tarot-card" onclick="openTarot()">🔮<br><span style="font-size:0.8rem">1. Kart (Geçmiş)</span></div>
+                    <div class="tarot-card" onclick="openTarot()">🔮<br><span style="font-size:0.8rem">2. Kart (Şimdi)</span></div>
+                    <div class="tarot-card" onclick="openTarot()">🔮<br><span style="font-size:0.8rem">3. Kart (Gelecek)</span></div>
+                </div>
+
+                <button class="action-btn" onclick="openTarot()">KARTLARI SEÇ VE DETAYLI 4 PARAGRAF ANALİZİ BAŞLAT</button>
+
+                <div class="analysis-box" id="tarot-result-box" style="display:none; margin-top:25px;">
+                    <div class="analysis-header">
+                        <div class="icon">🃏</div>
+                        <div>
+                            <div class="title">TAROT MİSTİK DETAYLI ANALİZİ</div>
+                            <div class="date">Kader Yolu Üçlü Kart Dizilimi</div>
+                        </div>
+                    </div>
+                    <div class="analysis-content" id="tarot-content"></div>
+                </div>
+            </div>
+
+            <!-- 3. KAHVE FALI SEKSİYONU -->
+            <div id="coffee-section" class="section-block">
+                <h1 class="header-title">KAHVE FALI ANALİZİ</h1>
+                <p class="header-subtitle">Fincanınızdaki Telvelerin Kozmik Dildeki Karşılığı.</p>
+
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <div class="icon">☕</div>
+                        <div>
+                            <div class="title">SEZGİSEL FİNCAN VE TELVE ANALİZİ</div>
+                            <div class="date">Görsel Frekans Okuması</div>
+                        </div>
+                    </div>
+                    <button class="action-btn" onclick="openCoffee()">FİNCANI OKU VE 4 PARAGRAF DETAYLI ANALİZ YATIR</button>
+                    <div class="analysis-content" id="coffee-content" style="margin-top:25px;"></div>
+                </div>
+            </div>
+
+            <!-- 4. AI MİSTİK REHBER SOHBET SEKSİYONU -->
+            <div id="guide-section" class="section-block">
+                <h1 class="header-title">AI MİSTİK REHBER</h1>
+                <p class="header-subtitle">Aklınızdaki Soruyu Sorun, Yıldızların ve Ruhsal Evrenin Derinliklerinden Cevap Alın.</p>
+
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <div class="icon">🔮</div>
+                        <div>
+                            <div class="title">MİSTİK SORU-CEVAP REHBERİ</div>
+                            <div class="date">Kişiselleştirilmiş Derin Kehanet</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-group">
+                        <input type="text" id="guide-question" class="chat-input" placeholder="Aşk, kariyer veya ruhsal yolculuğunuz hakkında bir soru sorun...">
+                        <button class="action-btn" style="width:160px; margin-top:0;" onclick="askGuide()">SORU SOR</button>
+                    </div>
+                    <div class="analysis-content" id="guide-content" style="margin-top:25px;"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // En az 4 uzun ve detaylı paragraf üreten Burç Analiz Fonksiyonu
-        function getZodiacAnalysis(signName) {
-            const p1 = `${signName} burcu için günün kozmik etkileri ve genel enerjileri oldukça yüksek bir uyanış evresine işaret ediyor. ` +
-                       `Gökyüzündeki gezegen konumları, zihninizde uzun süredir yanıt aradığınız karmaşık soruların netleşmesine yardımcı olacak güçlü frekanslar yayıyor. ` +
-                       `Ruhsal olarak kendinizi yeniden keşfettiğiniz bu dönemde, evrenin size sunduğu işaretleri ve eşzamanlılıkları dikkatle takip etmeniz gerekiyor. ` +
-                       `İçsel potansiyelinizin gün yüzüne çıkmasıyla birlikte hayatınızdaki eski kalıpları kırıp yepyeni bir sayfa açmak için mükemmel bir zamandasınız.`;
-
-            const p2 = `Aşk ve ikili ilişkilerde kalp çakranızın enerjisi ön plana çıkıyor. Partnerinizle olan bağlarınızda sadakat, şeffaflık ve derin bir ruhi çekim hakim olacak. ` +
-                       `Bastırılmış duyguların ve konuşulmayan hislerin açıklıkla ifade edileceği bu süreçte aranızdaki güven duygusu katlanarak artacaktır. ` +
-                       `Yalnız olan ${signName} bireyleri için geçmişin yüklerini tamamen geride bırakıp yeni ve kadersel bir ruh eşi çekimine açık olma vakti geldi. ` +
-                       `Duygusal dünyanızda dengeleri kurmak, ilişkilerinize çok daha sağlam ve huzurlu bir zemin kazandıracaktır.`;
-
-            const p3 = `Kariyer, finans ve hedefler alanında ise stratejik adımlar atmanız gereken disiplinli bir döneme giriyorsunuz. ` +
-                       `İş hayatınızdaki projeler ve maddi hedefleriniz yönünden sezgileriniz ile mantığınızı dengede tutarak hareket etmeniz büyük önem taşıyor. ` +
-                       `Karşınıza çıkabilecek yeni iş fırsatları veya finansal kararlarda acele etmeden, uzun vadeli kazançları göz önünde bulundurmalısınız. ` +
-                       `Çalışma azminiz, odaklanma yeteneğiniz ve ortaya koyduğunuz emekler sayesinde çevrenizden beklediğiniz takdiri ve bolluk bereket akışını elde edeceksiniz.`;
-
-            const p4 = `Kozmik tavsiye ve gelecek projeksiyonuna baktığımızda; yıldızlar size sabırlı olmanızı ve akışa güvenmenizi öğütlüyor. ` +
-                       `Önümüzdeki günlerde karşınıza çıkabilecek olası pürüzler veya gecikmeler, aslında sizi daha doğru bir yola sevk etmek için karşınıza çıkan tecrübelerdir. ` +
-                       `İçsel bilgeliğinize güvenin, günlük hayatın stresi içinde ruhsal pratiklerinizi ve kendinize ayırdığınız vakti ihmal etmeyin. ` +
-                       `Işığınıza ve kendi gücünüze inandığınız sürece yıldızların rehberliği sizi en parlak döneminize taşımaya devam edecektir.`;
-
-            return `<p>${p1}</p><p>${p2}</p><p>${p3}</p><p>${p4}</p>`;
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section-block').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if (evt) evt.currentTarget.classList.add('active');
         }
+
+        function selectZodiac(name, icon, date, evt) {
+            document.getElementById('z-icon').innerText = icon;
+            document.getElementById('z-title').innerText = name + ' BURCU';
+            document.getElementById('z-date').innerText = date;
+            
+            document.querySelectorAll('.zodiac-card').forEach(card => card.classList.remove('active'));
+            if (evt) evt.currentTarget.classList.add('active');
+
+            loadFourParagraphZodiac(name);
+        }
+
+        function loadFourParagraphZodiac(sign) {
+            const p1 = `<strong>1. Kozmik Enerji ve Zihinsel Durum:</strong> ${sign} burcu için gökyüzündeki gezegen geçişleri, hayatınızda derin bir farkındalık ve dönüşüm kapısı açıyor. Zihninizde uzun süredir cevap bekleyen karmaşık durumlar, bu kozmik evrede netleşmeye başlayacak. İçsel frekansınızın yükselmesiyle birlikte sezgilerinizin gücünü daha somut bir şekilde hissedeceksiniz. Bu durum, günlük kararlarınızda mantığınız kadar kalbinizin sesine de kulak vermeniz gerektiğini hatırlatıyor. Karşınıza çıkabilecek tesadüfi gibi görünen eşzamanlılıklar, aslında ruhsal yolculuğunuzun doğru rotada ilerlediğinin birer kanıtıdır.`;
+
+            const p2 = `<strong>2. Duygusal Bağlar ve İlişkiler:</strong> Kalp çakranızın frekansı bu süreçte oldukça yoğun bir şekilde aktifleşiyor. Özel hayatınızda ve ikili ilişkilerinizde dürüstlük, şeffaflık ve samimiyet her zamankinden daha fazla ön plana çıkacak. Partnerinizle dile getiremediğiniz duyguları sakinlik ve sevgi diliyle paylaşmak için mükemmel bir zaman dilimindesiniz. Eğer bekar bir ${sign} bireyiyseniz, geçmişin getirdiği duygusal yükleri ve eski kalıpları tamamen serbest bıraktığınızda, aura alanınız kadersel bir ruh eşi çekimini hayatınıza davet edecektir.`;
+
+            const p3 = `<strong>3. Kariyer, Hedefler ve Finansal Akış:</strong> İş hayatınızda, projelerinizde ve finansal planlamalarınızda stratejik ve temkinli adımlar atmanız gereken disiplinli bir dönemdesiniz. Yeni ortaklıklar, yatırım fırsatları veya kariyer hamleleri karşınıza çıkabilir; bu süreçte aceleci kararlar almak yerine vizyonunuzu uzun vadeye yaymalısınız. Çalışkanlığınız, özveriniz ve detaycı yaklaşımınız sayesinde üstlerinizin ve çevrenizin takdirini toplayacaksınız. Maddi konulardaki dengeli tutumunuz, bolluk ve bereket enerjisini doğrudan size çekecektir.`;
+
+            const p4 = `<strong>4. Geleçek Projeksiyonu ve Kozmik Tavsiye:</strong> Önümüzdeki günlerin kozmik rehberliğine bakıldığında, evren sizden sabırlı olmanızı ve hayatın doğal akışına güvenmenizi talep ediyor. Yaşanabilecek ufak pürüzler veya gecikmeler, aslında sizi daha büyük bir başarıya hazırlayan gizli birer fırsattır. Kendi içsel bilgeliğinize ve öz potansiyelinize inanın. Günlük temponuzun arasında ruhunuzu dinlendirecek ve enerjinizi tazeleyecek alanlar yaratmayı ihmal etmeyin. Öz enerjiniz korunduğu sürece, evrensel düzen sizin lehinizde çalışacaktır.`;
+
+            document.getElementById('z-content').innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p><p>${p4}</p>`;
+        }
+
+        function openTarot() {
+            document.getElementById('tarot-result-box').style.display = 'block';
+            
+            const p1 = `<strong>1. Geçmiş Temeli ve Kök Enerjiler (Kupa Onlusu):</strong> Seçtiğiniz ilk kart, geçmişinizde yaşadığınız duygusal tamamlanmaları ve ailevi/bağsal tecrübeleri simgeliyor. Geçmişte aldığınız cesur kararlar, ruhsal olgunluğunuzun ve bugün sahip olduğunuz güçlü sezgilerin temel taşını oluşturmuştur. İç dünyanızda aşmaya çalıştığınız kırgınlıklar tamamen şifalanma sürecine girmiş durumda. Yaşadığınız her sınav, ruhunuzun enerjisini yükselterek sizi daha korunaklı ve bilge bir insan haline getirmiştir.`;
+
+            const p2 = `<strong>2. Şu Anki Potansiyel ve Auranın Durumu (Büyücü Kartı):</strong> Şu anki enerjinizi temsil eden ikinci kart, hayatınızın dizginlerini tamamen kendi elinize alabileceğiniz yüksek bir tezahür gücünü işaret ediyor. Aklınızdaki projeleri, arzuları ve niyetleri somut gerçekliğe dönüştürmek için gereken tüm zihinsel yetenek ve kaynaklara sahipsiniz. Kararsızlıkları geride bırakıp özgüvenle adım atma zamanınız geldi. Evren, şu anki odağınızı ve kararlılığınızı ödüllendirmeye hazır bir frekansta bekliyor.`;
+
+            const p3 = `<strong>3. Kalp ve İlişkiler Yansıması (Kupa İkilisi):</strong> Duygusal yaşamınız ve ikili ilişkileriniz açısından kartlar son derece yapıcı, uyumlu ve dengeli bir sürece girdiğinizi müjdeliyor. Karşılıklı anlayışın, derin bağların ve ruhsal uyumun arttığı bir dönemdesiniz. Yalnızsanız, enerjinizin saflaşmasıyla birlikte hayatınıza tam anlamıyla uyum sağlayabileceğiniz ruhsal bir partner çekebilirsiniz. Var olan ilişkinizde ise ortak hayallere doğru atılacak adımlar bağlarınızı sarsılmaz bir seviyeye taşıyacaktır.`;
+
+            const p4 = `<strong>4. Gelecek Kehaneti ve Kozmik Rehberlik (Yıldız Kartı):</strong> Gelecek yolculuğunuzu aydınlatan son kart, hayatınızda umudun, ilhamın ve parlak gelişmelerin egemen olacağı yeni bir devrin başladığını müjdeliyor. Geçmişin karanlık ve yorucu yükleri tamamen geride kalırken, uzun süredir niyet ettiğiniz dilekleriniz sırayla gerçekleşmeye başlayacak. İçsel ışığınıza güvenmeye ve evrenin size sunduğu sezgisel rehberliği kabul etmeye devam edin. Parlak bir istikbal sizi bekliyor.`;
+
+            document.getElementById('tarot-content').innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p><p>${p4}</p>`;
+        }
+
+        function openCoffee() {
+            const p1 = `<strong>1. Fincan Dip Analizi ve İçsel Sıkıntılar:</strong> Fincanınızın dip kısmında toplanan yoğun telve kümesi, son dönemde zihninizi kurcalayan, üzerinizde zihinsel baskı oluşturan bazı karmaşık düşünceleri ve kararsızlıkları temsil etmektedir. Ancak bu telvelerin kenarlara doğru akarken hafiflemesi ve renginin açılması, sizi yoran bu içsel belirsizliklerin ve duygusal yüklerin çok kısa bir süre içerisinde dağılacağını net bir şekilde göstermektedir.`;
+
+            const p2 = `<strong>2. Semboller, Yollar ve Müjdeli Haberler:</strong> Fincanın kulp kısmına yakın bölgesinde ardı ardına uzanan açık ve temiz iki farklı yol sembolü belirmektedir. Bu yollar, yakında alacağınız hayırlı bir kararı ve bu kararla birlikte çıkabileceğiniz ferahlatıcı bir yolculuğu simgeliyor. Yolların bitiminde beliren kuş ve mektup figürleri ise uzaktan gelecek, hanenize neşe getirecek müjdeli bir haberin kapıda olduğuna işaret ediyor.`;
+
+            const p3 = `<strong>3. Müşterekler, Kısmet ve Maddi Kapılar:</strong> Tabağa süzülen telvelerde belirginleşen balık ve anahtar sembolleri, finansal ve iş hayatınızla ilgili uzun süredir emek verdiğiniz bir konuda kısmet kapılarının ardına kadar açılacağını müjdeliyor. Çevrenizdeki güvendiğiniz insanlardan alacağınız destekler, maddi konularda kendinizi çok daha güvende hissetmenizi sağlayacak. Emeklerinizin karşılığını fazlasıyla alacağınız bir döneme giriyorsunuz.`;
+
+            const p4 = `<strong>4. Tabağın Süzülmesi, Nazar ve Dilek Kapısı:</strong> Fincan tabağınızın ortasında biriken telvenin temiz bir şekilde süzülmesi, kalbinizden geçirdiğiniz ana niyetin ve dileğin kabul olacağına delalet eder. Tabağın kenarında oluşan göz sembolü ise üzerinizdeki olumsuz enerjilerin ve nazarın etkisini kaybettiğini gösteriyor. Kendinizi koruma altına alarak, niyetlerinizi yüksek tutarak ilerlemeye devam edin.`;
+
+            document.getElementById('coffee-content').innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p><p>${p4}</p>`;
+        }
+
+        function askGuide() {
+            const q = document.getElementById('guide-question').value;
+            if(!q) {
+                alert('Lütfen rehbere sormak istediğiniz soruyu yazın.');
+                return;
+            }
+
+            const p1 = `<strong>1. Ruhsal Enerjiniz ve Soruya Yaklaşım:</strong> "${q}" şeklinde yönelttiğiniz bu soru, ruhsal evrende ve aura alanınızda güçlü bir yankı uyandırıyor. Sorduğunuz konunun ardındaki temel motivasyon, sadece yüzeysel bir merak değil, hayat yolculuğunuzda aradığınız derin bir hakikat ve huzur arayışıdır. Kozmik frekanslar, şu an zihninizin bu soru etrafında yoğunlaştığını ve doğru zamanlamanın yaklaştığını işaret etmektedir.`;
+
+            const p2 = `<strong>2. Gizli Etkenler ve Evrensel Mesaj:</strong> Konunun görünmeyen yönlerine baktığımızda, yıldızlar geçmişte yaşadığınız bazı tereddütlerin şu anki görüşünüzü gölgelemesine izin vermemeniz gerektiğini söylüyor. Bu durumun çözümü, dış dünyadan gelen karmaşık sesleri susturup kendi sezgilerinize kulak vermenizde yatıyor. Evren, karşınıza çıkabilecek işaretler ve rüyalar aracılığıyla size rehberlik etmeye devam ediyor.`;
+
+            const p3 = `<strong>3. Dönüşüm ve Gelişim Süreci:</strong> Bu soruyla ilgili yaşanacak gelişmeler, hayatınızda sadece tek bir alanı değil, kendinize olan güveninizi ve gelecek vizyonunuzu da olumlu yönde etkileyecektir. Şüpheleri bir kenara bırakıp kendi potansiyelinizi kabul ettiğinizde, engellerin birer birer ortadan kalktığına şahit olacaksınız. Kararlılıkla atacağınız her adım, evrensel enerjiler tarafından desteklenecektir.`;
+
+            const p4 = `<strong>4. Kehanet Sonucu ve Kozmik Öğüt:</strong> Sonuç olarak, zihninizdeki bu belirsizlik çok yakın bir zaman dilimi içinde yerini netliğe ve ferahlığa bırakacaktır. Kalbinizdeki niyeti temiz tutarak, aceleci davranmadan sabırla ilerlemelisiniz. Ruhsal evren sizin yanınızdadır; kendi gücünüze inanın ve dönüşümün getireceği güzellikleri kabule geçin.`;
+
+            document.getElementById('guide-content').innerHTML = `<p>${p1}</p><p>${p2}</p><p>${p3}</p><p>${p4}</p>`;
+        }
+
+        window.onload = function() {
+            loadFourParagraphZodiac('BOĞA');
+        };
     </script>
 </body>
-</html>
+</html> 
