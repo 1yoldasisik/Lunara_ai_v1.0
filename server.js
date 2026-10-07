@@ -36,7 +36,7 @@ app.post('/api/chat/openai', async (req, res) => {
         { role: 'system', content: LUNARA_SYSTEM_PROMPT },
         { role: 'user', content: message }
       ],
-      temperature: 0.7,
+      temperature: 0.85,
     });
 
     res.json({ success: true, text: response.choices[0].message.content });
@@ -56,7 +56,7 @@ app.post('/api/chat/gemini', async (req, res) => {
       contents: message,
       config: {
         systemInstruction: LUNARA_SYSTEM_PROMPT,
-        temperature: 0.7,
+        temperature: 0.85,
       }
     });
 
