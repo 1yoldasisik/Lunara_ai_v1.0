@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunara AI - Mistik Doğum Haritası & Rehber</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #080411; color: #e2e8f0; min-height: 100vh; }
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; background: rgba(10, 6, 22, 0.95); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .logo-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-icon { width: 34px; height: 34px; background: radial-gradient(circle, #facc15 20%, #3b0764 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; }
+        .logo-text { font-size: 1.55rem; font-weight: 800; color: #d4af37; font-family: serif; }
+        .main-container { display: flex; gap: 28px; max-width: 1400px; margin: 30px auto; padding: 0 24px; }
+        .content-area { flex: 1; }
+        .chart-form-card { background: rgba(14, 9, 30, 0.85); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 16px; padding: 24px; max-width: 650px; margin: 0 auto 28px auto; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; }
+        .form-input { width: 100%; padding: 12px; background: rgba(7, 4, 16, 0.8); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 8px; color: #fff; font-size: 0.9rem; }
+        .calc-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #d97706, #a855f7); color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 8px; }
+        .analysis-box { background: rgba(14, 9, 30, 0.85); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 16px; padding: 28px; max-width: 650px; margin: 0 auto; }
+        .analysis-box-title { color: #d4af37; font-size: 1.25rem; font-weight: 800; font-family: serif; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
+        .api-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; max-width: 650px; margin-left: auto; margin-right: auto; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">🌙</div>
+            <div class="logo-text">LUNARA AI</div>
+        </div>
+    </header>
+
+    <div class="main-container" style="display:block;">
+        <div class="api-box">
+            <label class="form-label" style="color: #fca5a5;">🔑 OpenAI API Key Ayarı (Tarayıcınızda Saklanır):</label>
+            <input type="password" id="user-api-key" class="form-input" placeholder="sk-..." onchange="saveApiKey(this.value)">
+            <small style="color: #94a3b8; display:block; margin-top:4px;">Anahtarınız güvenle tarayıcınızda (localStorage) saklanır ve doğrudan OpenAI sunucularına bağlanır.</small>
+        </div>
+
+        <div class="content-area">
+            <div class="chart-form-card">
+                <h1 style="color: #d4af37; font-family:serif; font-size: 1.5rem; margin-bottom: 15px; text-align:center;">AI MİSTİK REHBER</h1>
+                <div class="form-group">
+                    <label class="form-label">Sormak İstediğiniz Soru veya Konu</label>
+                    <input type="text" id="guide-question" class="form-input" placeholder="Örn: Ruhsal yolculuğumda beni ne bekliyor?">
+                </div>
+                <button class="calc-btn" onclick="askGuide()">Rehbere Soru Sor</button>
+            </div>
+
+            <div class="analysis-box">
+                <div class="analysis-box-title">MİSTİK REHBER CEVABI</div>
+                <div id="guide-result" style="color:#cbd5e1; line-height:1.7;">Sorunuzu yazıp butona tıklayarak gerçek zamanlı yapay zeka analizi alabilirsiniz.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const savedKey = localStorage.getItem('lunara_openai_key');
+            if (savedKey) {
+                document.getElementById('user-api-key').value = savedKey;
+            }
+        };
+
+        function saveApiKey(val) {
+            localStorage.setItem('lunara_openai_key', val.trim());
+            alert("API Key tarayıcınıza başarıyla kaydedildi!");
+        }
+
+        async function askGuide() {
+            const apiKey = localStorage.getItem('lunara_openai_key') || document.getElementById('user-api-key').value.trim();
+            const q = document.getElementById('guide-question').value.trim();
+            const res = document.getElementById('guide-result');
+
+            if (!apiKey) {
+                alert("Lütfen üst alandaki alana geçerli bir OpenAI API Key giriniz!");
+                return;
+            }
+            if (!q) {
+                alert("Lütfen bir soru yazınız.");
+                return;
+            }
+
+            res.innerHTML = "<i>🔮 Yapay zeka kozmik enerjileri harmanlıyor, lütfen bekleyin...</i>";
+
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini",
+                        messages: [
+                            { role: "system", content: "Sen bilge ve mistik bir AI falcısısın. Kullanıcıya derin, özgün ve mistik bir analiz ver." },
+                            { role: "user", content: q }
+                        ],
+                        temperature: 0.9
+                    })
+                });
+
+                const data = await response.json();
+                if (data.choices && data.choices.length > 0) {
+                    res.innerHTML = `<p>${data.choices[0].message.content.replace(/\n/g, '<br>')}</p>`;
+                } else {
+                    res.innerHTML = `<p style="color:#ef4444;">API Yanıt Hatası: ${data.error?.message || 'Bilinmeyen hata'}</p>`;
+                }
+            } catch (err) {
+                res.innerHTML = `<p style="color:#ef4444;">Bağlantı hatası oluştu.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
