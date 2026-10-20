@@ -1,11 +1,11 @@
 {
   "name": "lunara_ai_v1.0",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lunara AI",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.3",
     "express": "^5.2.1",
+    "nodemailer": "^10.1.7",
     "openai": "^7.23.0"
   }
 }
